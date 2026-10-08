@@ -36,6 +36,18 @@ cp .env.example ~/.config/triagebench/.env   # then add a read-only GitHub token
 uv run pytest
 ```
 
+## Building the dataset (Week 1)
+
+```bash
+uv run python -m evals.survey_repos            # label hygiene per candidate repo -> docs/decisions.md
+uv run python -m evals.build_dataset build     # ~900 issues, cached under ~/.cache/triagebench
+uv run python -m evals.build_dataset verify    # offline rebuild must match every manifest hash
+git add evals/data && git commit -m "Freeze dataset v1"
+git tag test-split-v1 && git push origin test-split-v1   # seal BEFORE any prompt work
+```
+
+What goes in: `t0` is what was visible when the issue was opened (original title, body, issue-form labels, default-branch SHA, open issues). `t1` is what maintainers did afterwards (labels added by humans, duplicate links, closing commit, merged PRs). Bot-applied labels are recorded but never count as truth. The test split only opens with `TRIAGEBENCH_FINAL_EVAL=1`.
+
 ## License
 
 MIT. Issue data is public GitHub content; each snapshot links back to its source issue.
