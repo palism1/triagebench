@@ -106,3 +106,7 @@ class FakeSource:
 
     def last_edited(self, repo: str, numbers: list[int]) -> dict[int, str | None]:
         return {n: self.repos[repo]["edited"].get(n) for n in numbers}
+
+    def labels(self, repo: str) -> list[dict]:
+        names = sorted({lbl["name"] for i in self.repos[repo]["issues"] for lbl in i["labels"]})
+        return [{"name": n, "description": f"{n} issues", "color": "ffffff"} for n in names]
