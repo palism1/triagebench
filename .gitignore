@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+# Node
+node_modules/
+dist/
+# Secrets: the GitHub token lives in ~/.config/triagebench/.env, never here
+.env
+.env.*
+!.env.example
+# Raw GitHub API cache (rebuildable, can be large)
+.cache/
