@@ -29,3 +29,11 @@ Byte-identical rebuilds are easier to test on sorted-key JSON lines than on parq
 ## D6. Edited issue bodies are excluded by default (2026-10-08)
 
 The REST API returns the latest body, which can contain post-t0 text ("fixed in 0.6.3"). Issues whose body was edited more than `EDIT_GRACE` after creation are skipped by the sampler (count reported). Titles are restored from the first `renamed` event.
+
+## D7. Duplicate-search corpus uses current titles and bodies (2026-10-08)
+
+The issue under test is fully reconstructed at t0, and `search_dup` only sees issues that were open at that moment. The candidates' own titles and bodies are their current versions, though, because restoring each one would cost a timeline call per candidate (thousands per repo). Risk: a candidate retitled "[duplicate] ..." after t0 hints at the answer. Revisit if duplicate recall looks suspiciously high; the fix is a timeline-based title restore for corpus entries only.
+
+## D8. MCP server reads t0 only; writes are proposals (2026-10-08)
+
+`get_file` takes an issue number, not a SHA, and always reads at that issue's t0 commit. `propose_label` / `propose_pr` never call GitHub: they return a proposal with a content-hash id for the approval queue (Week 7). Live mode refuses any repo not passed with `--allow-repo`, and refuses everything without `--approve`; the allowlist check runs first so approval cannot widen it.

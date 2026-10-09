@@ -1,5 +1,6 @@
 # FILE MAP
-#   1-30  CI: lint and test the Python half on every push and PR. Node jobs join in Week 2.
+#   1-45  CI: Python lint + tests (with the built MCP server for the smoke test), and the
+#         TypeScript MCP server typecheck + tests.
 name: ci
 on:
   push:
@@ -14,6 +15,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mcp-server/package-lock.json
+      - run: npm ci && npm run build
+        working-directory: mcp-server
+      - run: uv sync --group agent
       - run: uv run ruff check .
       - run: uv run pytest -q
+  mcp-server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: mcp-server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mcp-server/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test

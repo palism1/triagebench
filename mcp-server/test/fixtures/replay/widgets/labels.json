@@ -1,0 +1,6 @@
+[
+ {"description": "Documentation", "name": "area/docs"},
+ {"description": "Dependency solver", "name": "area/solver"},
+ {"description": "Already reported", "name": "duplicate"},
+ {"description": "Something is broken", "name": "kind/bug"}
+]

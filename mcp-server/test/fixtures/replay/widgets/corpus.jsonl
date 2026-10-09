@@ -1,0 +1,5 @@
+{"body":"Solver crashes with RecursionError when two packages depend on each other (circular dependency).","number":3,"title":"Solver crashes on circular dependency"}
+{"body":"There is a typo in the install guide: isntall.","number":5,"title":"Docs typo in install guide"}
+{"body":"`widgets --version` prints an empty line.","number":7,"title":"CLI --version prints nothing"}
+{"body":"With dependency groups that reference each other the solver never finishes.","number":11,"title":"Solver hangs with circular deps in groups"}
+{"body":"Same circular dependency RecursionError crash in solver, reported later.","number":20,"title":"RecursionError solver circular dependency (later report)"}

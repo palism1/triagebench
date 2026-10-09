@@ -14,6 +14,8 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
+# The agent half. Week 2 uses only the MCP client; Pydantic AI joins in Week 3.
+agent = ["mcp>=2.3"]
 
 [build-system]
 requires = ["hatchling"]
@@ -24,6 +26,7 @@ packages = ["evals"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["smoke: needs the built MCP server (npm run build in mcp-server/)"]
 
 [tool.ruff]
 line-length = 100
