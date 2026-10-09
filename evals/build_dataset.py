@@ -32,6 +32,7 @@ class Source(Protocol):
     def timeline(self, repo: str, number: int) -> list[dict]: ...
     def t0_sha(self, repo: str, created_at: str) -> str: ...
     def last_edited(self, repo: str, numbers: list[int]) -> dict[int, str | None]: ...
+    def labels(self, repo: str) -> list[dict]: ...
 
 
 class GitHubSource:
@@ -55,6 +56,10 @@ class GitHubSource:
             f"/repos/{repo}/commits", sha=self._branch[repo], until=created_at, per_page=1
         )
         return commits[0]["sha"]
+
+    def labels(self, repo: str) -> list[dict]:
+        # Current label set; repos rarely delete labels, so this approximates the t0 set.
+        return list(self.gh.paginate(f"/repos/{repo}/labels"))
 
     def last_edited(self, repo: str, numbers: list[int]) -> dict[int, str | None]:
         owner, name = repo.split("/")

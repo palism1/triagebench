@@ -21,7 +21,7 @@ Reasoning and rejected candidates: [docs/decisions.md](docs/decisions.md).
 
 ```
 agent/       Python agent (Pydantic AI) + FastAPI approval queue      (Week 3+)
-mcp-server/  TypeScript MCP server: get_issue, search_dup, ...        (Week 2)
+mcp-server/  TypeScript MCP server over replay fixtures (get_issue, list_labels, search_dup, get_file, propose_*)
 evals/       dataset builder, tasks, judges, harness (Inspect AI)
 ui/          approval queue + trace viewer (TypeScript, React)        (Week 7)
 sandbox/     Docker repro sandbox                                     (Week 6)
@@ -47,6 +47,17 @@ git tag test-split-v1 && git push origin test-split-v1   # seal BEFORE any promp
 ```
 
 What goes in: `t0` is what was visible when the issue was opened (original title, body, issue-form labels, default-branch SHA, open issues). `t1` is what maintainers did afterwards (labels added by humans, duplicate links, closing commit, merged PRs). Bot-applied labels are recorded but never count as truth. The test split only opens with `TRIAGEBENCH_FINAL_EVAL=1`.
+
+## MCP server (Week 2)
+
+```bash
+uv run python -m evals.export_replay               # dev split -> ~/.cache/triagebench/replay
+cd mcp-server && npm ci && npm run build && npm test
+node dist/index.js --replay-dir ~/.cache/triagebench/replay   # stdio MCP server, replay + dry-run
+uv run --group agent python -m agent.triage.smoke_mcp --replay-dir ~/.cache/triagebench/replay --repo astral-sh/ruff --number <issue>
+```
+
+Every read is the issue's t0 view: `search_dup` only searches issues that were open when it was filed, and `get_file` reads at its t0 commit. `propose_label` and `propose_pr` return proposals for human approval; live mode needs both `--allow-repo owner/name` and `--approve`.
 
 ## License
 
