@@ -3,7 +3,7 @@
 #   28-50  smoke: connect, list tools, call each read tool once on one issue
 #   53-65  CLI
 #
-# Purpose: prove the Python side can reach the MCP server before the agent exists (Week 2).
+# Purpose: prove the Python side can reach the MCP server before the agent exists.
 # Usage: (cd mcp-server && npm run build) && uv run --group agent python -m agent.triage.smoke_mcp \
 #          --replay-dir ~/.cache/triagebench/replay --repo astral-sh/ruff --number 12345
 
