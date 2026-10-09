@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 import { call, connect, REPO } from "./helpers.js";
 
 describe("tool surface", () => {
-  it("lists exactly the Week 2 tools", async () => {
+  it("lists exactly the six triage tools", async () => {
     const client = await connect();
     const names = (await client.listTools()).tools.map((t) => t.name).sort();
     expect(names).toEqual(["get_file", "get_issue", "list_labels", "propose_label", "propose_pr", "search_dup"]);

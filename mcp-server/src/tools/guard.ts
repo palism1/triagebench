@@ -3,7 +3,7 @@
 //   23-45  checkWrite: replay -> dry-run; live -> needs --approve AND an allowlisted repo
 //   48-70  makeProposal: deterministic proposal record (id = hash of its content)
 //
-// Purpose: the write gate. propose_* tools never touch GitHub in Week 2; they return a
+// Purpose: the write gate. propose_* tools never touch GitHub; they return a
 // proposal for the approval queue. This module decides whether a live write could ever run.
 
 import { createHash } from "node:crypto";

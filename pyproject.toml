@@ -14,7 +14,7 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
-# The agent half. Week 2 uses only the MCP client; Pydantic AI joins in Week 3.
+# The agent half. Only the MCP client so far; Pydantic AI joins with the agent.
 agent = ["mcp>=2.3"]
 
 [build-system]
