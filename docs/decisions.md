@@ -36,4 +36,4 @@ The issue under test is fully reconstructed at t0, and `search_dup` only sees is
 
 ## D8. MCP server reads t0 only; writes are proposals (2026-10-08)
 
-`get_file` takes an issue number, not a SHA, and always reads at that issue's t0 commit. `propose_label` / `propose_pr` never call GitHub: they return a proposal with a content-hash id for the approval queue (Week 7). Live mode refuses any repo not passed with `--allow-repo`, and refuses everything without `--approve`; the allowlist check runs first so approval cannot widen it.
+`get_file` takes an issue number, not a SHA, and always reads at that issue's t0 commit. `propose_label` / `propose_pr` never call GitHub: they return a proposal with a content-hash id for the approval queue. Live mode refuses any repo not passed with `--allow-repo`, and refuses everything without `--approve`; the allowlist check runs first so approval cannot widen it.
