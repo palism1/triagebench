@@ -14,8 +14,11 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
-# The agent half. Only the MCP client so far; Pydantic AI joins with the agent.
-agent = ["mcp>=2.3"]
+# The agent half: Pydantic AI agent, MCP client, and the eval harness that drives them.
+agent = [
+    "mcp>=2.3",
+    "pydantic-ai-slim[google,mcp,openai]>=2.54.0",
+]
 
 [build-system]
 requires = ["hatchling"]

@@ -5,7 +5,7 @@
 
 An agent that triages a GitHub issue queue the way a maintainer's assistant would (classify, label, find duplicates, extract repro steps, draft small fixes), behind human approval gates, plus a **benchmark backtested on real issue history**: ground truth is what maintainers actually did.
 
-> Status: dataset builder and MCP server are in place; the agent and eval harness are next. Results table, demo video and failure taxonomy land here as they exist.
+> Status: dataset builder, MCP server, the zero-shot agent and the eval harness are in place; first numbers come from the frozen dataset. Results table, demo video and failure taxonomy land here as they exist.
 
 ## Backtest repos
 
@@ -20,9 +20,9 @@ Reasoning and rejected candidates: [docs/decisions.md](docs/decisions.md).
 ## Layout
 
 ```
-agent/       Python agent (Pydantic AI) + FastAPI approval queue      (planned)
+agent/       Python agent (Pydantic AI); FastAPI approval queue           (queue planned)
 mcp-server/  TypeScript MCP server over replay fixtures (get_issue, list_labels, search_dup, get_file, propose_*)
-evals/       dataset builder, tasks, judges, harness (Inspect AI)
+evals/       dataset builder, task scorers, eval harness
 ui/          approval queue + trace viewer (TypeScript, React)        (planned)
 sandbox/     Docker repro sandbox                                     (planned)
 docs/        decisions, discovery, solution brief, eval report
@@ -62,3 +62,25 @@ Every read is the issue's t0 view: `search_dup` only searches issues that were o
 ## License
 
 MIT. Issue data is public GitHub content; each snapshot links back to its source issue.
+
+## Running the eval
+
+```bash
+uv run python -m evals.export_replay                   # dev split -> ~/.cache/triagebench/replay
+(cd mcp-server && npm ci && npm run build)
+ollama pull qwen3:8b
+uv run --group agent python -m evals.harness run --model ollama:qwen3:8b --limit 20
+GOOGLE_API_KEY=... uv run --group agent python -m evals.harness run --model google:gemini-2.5-flash --limit 20
+```
+
+Each run writes `predictions.jsonl`, `report.json` and `report.md` under `~/.cache/triagebench/runs/<model>`. Interrupted runs resume where they stopped, and `--limit` picks the same seeded issues for every model, so runs compare issue for issue. `--model` takes `ollama:<tag>` or any Pydantic AI model string.
+
+The agent is zero-shot with read-only tools and no guardrails, so later changes are measured against it. Tasks and their metrics:
+
+| Task | Truth | Headline | Also reported |
+|---|---|---|---|
+| `label` | labels a human added after t0, net of issue-form labels | micro F1 | precision, recall, exact match, rate of labels that don't exist in the repo |
+| `dup` | `duplicate_of`, or none | accuracy | duplicate precision and recall, recall when the true target was open at t0 |
+
+Headline numbers carry a 95% bootstrap interval over issues. Model or tool failures count as an empty answer and are reported by error type.
+
